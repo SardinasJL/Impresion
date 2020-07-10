@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<h1>Ejemplo de impresión de algo</h1>
+<p>Se imprimen las letras pepe pony</p>
+
+<input type="button" value="Escanear" id="btnEscanear"><br>
+<br>
+<br>
+<p>Nombre de la impresora a conectar</p>
+<input type="text" id="txtImpresora">
+<input type="button" value="Conectar" id="btnConectar"><br>
+<br>
+<br>
+<p>Texto a imprimir</p>
+<input type="text" id="txtTexto">
+<input type="button" value="Imprimir" id="btnImprimir"><br>
+<br>
+<br>
+<p>Comando ESC a imprimir</p>
+<input type="text" id="txtCmd">
+<input type="button" value="ImprimirESC" id="btnImprimirESC"><br>
+<br>
+<br>
+<input type="button" value="Cortar" id="btnCortar"><br>
+<input type="button" value="json" id="json">
+<br>
+Paso 1
+<p id="txt1"></p>
+<hr>
+Paso 2
+<p id="txt2"></p>
+<hr>
+Paso 3
+<p id="txt3"></p>
+<hr>
+Paso 4
+<p id="txt4"></p>
+<hr>
+Enviar una foto por php <br>
+IP <input type="text" id="txtIP"><br>
+Nombre <input type="text" id="txtNombreFoto"><br>
+<input type="button" value="Foto" id="btnFoto"><br>
+Foto local
+<img id="fotoLocal" src="" width="100px" height="100px"><br>
+Foto servidor
+<img id="fotoServidor" src="" width="100px" height="100px">
+
+<script src="js/jquery.js"></script>
+<script src="cordova.js"></script>
+<script charset="UTF-8">
+    $(document).ready(function () {
+        $("#btnEscanear").click(function () {
+            Escanear();
+        });
+        $("#btnConectar").click(function () {
+            Conectar();
+        });
+        $("#btnImprimir").click(function () {
+            Imprimir();
+        });
+        $("#btnCortar").click(function () {
+            Cortar();
+        });
+        $("#btnImprimirESC").click(function () {
+            ImprimirESC();
+        });
+        $("#json").click(function () {
+            var result = [{"printername": "1155_1003"}];
+
+
+            var mensaje = "hola" + String.fromCharCode(10) + "jos" + String.fromCharCode(128);
+            mensaje += String.fromCharCode(27) + String.fromCharCode(33) + String.fromCharCode(128);
+            mensaje += "Luis" + String.fromCharCode(27) + String.fromCharCode(18) + "Sardinas";
+            alert(mensaje);
+
+
+        });
+        $("#btnFoto").click(function () {
+            Tomar_foto();
+        });
+
+
+    });
+
+    Escanear = function () {
+
+        //Plugin disponible en https://www.npmjs.com/package/cordova-plugin-usbprint
+
+        //1.- Primero se escanea las impresoras conectadas por USB
+        //El resultado aparece dentro del
+        cordova.plugins.UsbPrinter.getConnectedPrinters((result) => {
+
+            $("#txt1").html(JSON.stringify(result));
+            $("#txtImpresora").val(result[0].printername);
+
+        }, err => {
+            //1.- Si no se puede escanear se muestra el error
+
+            $("#txt1").html(JSON.stringify(err));
+
+        });
+    };
+
+    Conectar = function () {
+        //2.- Se conecta a la impresora seleccionada
+        //printer.printername es el nombre de la impresora, la cual se obtiene en el paso 1 (argumento de la func)
+        //Para el presente caso, printer.printername es "1155_1002" (impresora térmica Rowell)
+        Impresora = $("#txtImpresora").val();
+        cordova.plugins.UsbPrinter.connect(Impresora, (result) => {
+            $("#txt2").html(result)
+            // success callback execution
+        }, err => {
+            // use this method to recognise the disconnection of usb device
+            $("#txt2").html(err)
+            // failure callback execution
+        });
+    };
+
+
+    Imprimir = function () {
+
+        //3.- Se envía la cadena de impresión
+        //Los argumentos son el nombre de la impresora y el mensaje a imprimir
+        //La impresora Rowell puede imprimir 48 caracteres por línea
+        /*var mensaje = "                ℂ 𝕆 𝕆 ℙ 𝔼 𝕃 𝔼 ℂ 𝕋\n";
+        mensaje += "                AVISO DE COBRANZA\n";
+        mensaje += "𝑹𝒂𝒛ó𝒏 𝑺𝒐𝒄𝒊𝒂𝒍:\n";
+        mensaje += "SARDINAS MALLCO JOSE LUIS\n";
+        mensaje += "Importe por Consumo Fijo\t13.60";
+        mensaje += "Importe Energía🐶\t\t\t78.30";*/
+        //var mensaje = $("#txtTexto").val();
+
+        //var NegrillaOn = String.fromCharCode(27) + "E";
+        //var NegrillaOff = String.fromCharCode(27) + "F";
+        //var NegrillaOn = String.fromCharCode(27) + "!" + "8" ;
+
+        //var CursivaOn = String.fromCharCode(27) + "4";
+        //var CursivaOff = String.fromCharCode(27) + "5";
+
+        //ESTE DOBLE TAMAÑO NO FUNCIONA
+        //var DobletamanoOn = String.fromCharCode(27) + "G";
+        //var DobletamanoOff = String.fromCharCode(27) + "H";
+        //var DobletamanoOn = String.fromCharCode(29) + "!" + "1";
+        //var DobletamanoOff = String.fromCharCode(29) + "!" + "0";
+
+        var JustificacionIzquierda = String.fromCharCode(27) + "a" + "0";
+        var JustificacionCentrado = String.fromCharCode(27) + "a" + "1";
+        var JustificacionDerecha = String.fromCharCode(27) + "a" + "2";
+        var JustificacionTotal = String.fromCharCode(27) + "a" + "3";
+
+
+        /*var mensaje = JustificacionCentrado;
+        mensaje += NegrillaOn + "AVISO DE COBRANZA\n" + NegrillaOff;
+        mensaje += JustificacionIzquierda;
+        mensaje += NegrillaOn + "Razon Social: " + NegrillaOff + "SARDINAS MALLCO JOSÉ LUIS\n";
+        mensaje += JustificacionDerecha;
+        mensaje += "Importe por consumo fijo       \t\t" + "13.60\n";
+        mensaje += "IMPORTE SUJETO A CREDITO FISCAL\t\t" + "74.90\n";
+        mensaje += JustificacionIzquierda;
+        mensaje += CursivaOn + "SON: NOVENTA Y TRES 30/100 BOLIVIANOS\n" + CursivaOff;
+        mensaje += JustificacionTotal;
+        mensaje += "EMPRESA SUPERVISADA POR LA";*/
+
+        var mensaje = JustificacionCentrado;
+        mensaje += "--------------------\n";
+        mensaje += "| AVISO DE COBRANZA |\n";
+        mensaje += "--------------------\n";
+        mensaje += JustificacionIzquierda;
+        mensaje += "Razon Social: " + "SARDINAS MALLCO JOSÉ LUIS\n";
+        mensaje += JustificacionDerecha;
+        mensaje += "Importe por consumo fijo       \t\t" + "13.60\n";
+        mensaje += "IMPORTE SUJETO A CREDITO FISCAL\t\t" + "74.90\n";
+        mensaje += JustificacionIzquierda;
+        mensaje += "SON: NOVENTA Y TRES 30/100 BOLIVIANOS\n";
+        mensaje += JustificacionTotal;
+        mensaje += "EMPRESA SUPERVISADA POR LA";
+
+        cordova.plugins.UsbPrinter.print(Impresora, mensaje, (result) => {
+            $("#txt3").html("result of usb print action", result)
+            // successful callback execution
+        }, err => {
+            $("#txt3").html('Error in usb print action', err)
+            // failure callback execution
+        });
+
+    };
+    //Fin de la función impresion()
+
+    ImprimirESC = function () {
+        //3.1.- Se prueban algunos comandos esc/pos, NO FUNCIONAN, YA PROBÉ, EL PLUGIN TIENE UN ERROR
+        /*var esc = '\x1B'; //ESC byte in hex notation
+        var newLine = '\x0A'; //LF byte in hex notation
+        var cmds = esc + "@"; //Initializes the printer (ESC @)
+        cmds += esc + '!' + '\x38'; //Emphasized + Double-height + Double-width mode selected (ESC ! (8 + 16 + 32)) 56 dec => 38 hex
+        cmds += 'PEPE PONY XD'; //text to print*/
+        /*String.prototype.toBytes = function() {
+            var arr = [];
+            for (var i=0; i < this.length; i++) {
+                arr.push(this[i].charCodeAt(0))
+            }
+            return arr
+        };
+        var cmds = 'hello world'.toBytes().concat([0x01B, 0x64, 10]);*/
+
+        var command = [104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100];
+        cordova.plugins.UsbPrinter.sendCommand(Impresora, command, (result) => {
+            $("#txt3").html("result of usb print action", result)
+            // successful callback execution
+        }, err => {
+            $("#txt3").html('Error in usb print action', err)
+            // failure callback execution
+        });
+    };
+
+    Cortar = function () {
+
+        //4.- Se eyecta y corta el papel (lo último sólo para impresoras con cuchilla).
+        cordova.plugins.UsbPrinter.cutPaper(Impresora, (result) => {
+            $("#txt4").html(result)
+            // success callback execution
+        }, err => {
+            // use this method to cut paper
+            $("#txt4").html(err)
+            // failure callback execution
+        });
+
+
+    };
+
+    Tomar_foto = function () {
+        navigator.camera.getPicture(Foto_obtenida, Foto_no_obtenida, {
+            quality: 50,
+            destinationType: Camera.DestinationType.FILE_URI
+        });
+    };
+
+    Foto_obtenida = function (imageURI) {
+        var image = document.getElementById('fotoLocal');
+        image.src = imageURI;
+        subirImagen(imageURI);
+    };
+
+    Foto_no_obtenida = function (message) {
+        alert('Error: ' + message);
+    };
+
+    subirImagen = function(fileURL) {
+
+        var options = new FileUploadOptions();
+        options.fileKey = "imagen";
+        //options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+        options.fileName = $("#txtNombreFoto").val();
+        options.params = {"Usuario": "jsardinas", "Contra": "123456", "Abonado": "1234567", "Emision": "30/06/2020"};
+
+        var ft = new FileTransfer();
+        //ft.upload(fileURL, encodeURI("http://192.168.1.9/ejercicios/upload/upload.php"), uploadSuccess, uploadFail, options);
+        //ft.upload(fileURL, encodeURI("http://" + $("#txtIP").val() + "/ejercicios/upload/upload.php"), uploadSuccess, uploadFail, options);
+        ft.upload(fileURL, encodeURI("http://" + $("#txtIP").val() + "/ejercicios/upload.php"), uploadSuccess, uploadFail, options);
+    };
+
+    uploadSuccess = function(r) {
+        alert("Code = " + r.responseCode + " Respuesta = " + r.response+" Enviado = " + r.bytesSent);
+        var image = document.getElementById('fotoServidor');
+        image.src = r.response;
+    };
+
+    uploadFail = function(error) {
+        alert("Ocurrió un error: Code = " + error.code + " origen " + error.source + " destino " + error.target);
+
+    }
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

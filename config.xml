@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+	<widget id="com.prueba.pepe" version="0.0.1">
+		<name>Impresión :v</name>
+		<description>
+            Esta app sirve para realizar probar la funcionalidad de la impresion por OTG
+		</description>
+		<author email="sardinasjoseluis1@gmail.com" href="http://www.joseluis.com">
+            Jose Luis Sardinas
+		</author>
+		<content src="index.html" />
+	
+		<preference name="stay-in-webview" value="true" />
+		<preference name="fullscreen" value="false"/>
+		<preference name="phonegap-version" value="cli-8.0.0" />
+
+		<plugin name="cordova-plugin-whitelist" spec="1" />
+		<plugin name="cordova-plugin-inappbrowser" />
+		<plugin name="cordova-plugin-splashscreen" />
+		
+		<plugin name="phonegap-plugin-barcodescanner">
+		<variable name="CAMERA_USAGE_DESCRIPTION" value=" " />
+		</plugin>
+
+		<plugin name="cordova-plugin-usbprint">
+		</plugin>
+
+		<plugin name="cordova-plugin-camera"></plugin>
+		<plugin name="cordova-plugin-file-transfer"></plugin>
+
+		<access origin="*" />
+		<allow-navigation href="*" />
+		<allow-intent href="*" />
+		<icon src="icono.png" />
+		<splash src="splash.png" />
+</widget>
