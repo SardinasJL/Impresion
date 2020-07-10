@@ -53,6 +53,10 @@ Foto local
 Foto servidor
 <img id="fotoServidor" src="" width="100px" height="100px">
 
+<hr>
+<input type="button" id="btnObtenerCoordenadasGPS">
+<hr>
+
 <script src="js/jquery.js"></script>
 <script src="cordova.js"></script>
 <script charset="UTF-8">
@@ -83,11 +87,14 @@ Foto servidor
 
 
         });
+        //---------------------------------------------------------------------------------------
         $("#btnFoto").click(function () {
             Tomar_foto();
         });
-
-
+        //----------------------------------------------------------------------------------
+        $("#btnObtenerCoordenadasGPS").click(function () {
+            Obtener_coordenadas_actuales();
+        });
     });
 
     Escanear = function () {
@@ -235,6 +242,12 @@ Foto servidor
 
     };
 
+    /*
+    * Funciones para tomar una foto y subirla al servidor
+     */
+
+    //---------------------------------------------------------------------------------------------------------------
+
     Tomar_foto = function () {
         navigator.camera.getPicture(Foto_obtenida, Foto_no_obtenida, {
             quality: 50,
@@ -252,7 +265,7 @@ Foto servidor
         alert('Error: ' + message);
     };
 
-    subirImagen = function(fileURL) {
+    subirImagen = function (fileURL) {
 
         var options = new FileUploadOptions();
         options.fileKey = "imagen";
@@ -266,23 +279,49 @@ Foto servidor
         ft.upload(fileURL, encodeURI("http://" + $("#txtIP").val() + "/ejercicios/upload.php"), uploadSuccess, uploadFail, options);
     };
 
-    uploadSuccess = function(r) {
-        alert("Code = " + r.responseCode + " Respuesta = " + r.response+" Enviado = " + r.bytesSent);
+    uploadSuccess = function (r) {
+        alert("Code = " + r.responseCode + " Respuesta = " + r.response + " Enviado = " + r.bytesSent);
         var image = document.getElementById('fotoServidor');
         image.src = r.response;
     };
 
-    uploadFail = function(error) {
+    uploadFail = function (error) {
         alert("Ocurrió un error: Code = " + error.code + " origen " + error.source + " destino " + error.target);
 
     }
 
+    //---------------------------------------------------------------------------------------------------------
 
+    /*
+    * Funciones para obtener las coordenadas GPS actuales
+    * maximumAge: Accept a cached position whose age is no greater than the specified time in milliseconds. (Number)
+    * timeout: The maximum length of time (milliseconds) that is allowed to pass from the call
+    * enableHighAccuracy: If true, framework use more accurate methods, such as satellite
+     */
+    Obtener_coordenadas_actuales = function () {
+        navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationError, {
+            maximumAge: 3000,
+            timeout: 5000,
+            enableHighAccuracy: true
+        });
 
+    };
 
+    geolocationSuccess = function (position) {
+        alert('Latitude: ' + position.coords.latitude + '\n' +
+            'Longitude: ' + position.coords.longitude + '\n' +
+            'Altitude: ' + position.coords.altitude + '\n' +
+            'Accuracy: ' + position.coords.accuracy + '\n' +
+            'Altitude Accuracy: ' + position.coords.altitudeAccuracy + '\n' +
+            'Heading: ' + position.coords.heading + '\n' +
+            'Speed: ' + position.coords.speed + '\n' +
+            'Timestamp: ' + position.timestamp + '\n');
+    };
 
-
-
+    geolocationError = function (error) {
+        alert('code: ' + error.code + '\n' +
+            'message: ' + error.message + '\n');
+    };
 
 
 </script>
