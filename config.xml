@@ -29,8 +29,6 @@
 
 		<plugin name="cordova-plugin-geolocation"></plugin>
 
-		<plugin name="cordova-plugin-printerplugin"></plugin>
-
 		<access origin="*" />
 		<allow-navigation href="*" />
 		<allow-intent href="*" />
